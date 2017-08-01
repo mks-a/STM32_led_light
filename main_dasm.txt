@@ -8,14 +8,35 @@ Disassembly of section .text:
    0:	00028000 	andeq	r8, r2, r0
 
 00000004 <RESET>:
-   4:	00000009 	andeq	r0, r0, r9
+   4:	00000026 	andeq	r0, r0, r6, lsr #32
 
-00000008 <_main_loop>:
-   8:	e7fe      	b.n	8 <_main_loop>
-   a:	4770      	bx	lr
+00000008 <led_init>:
+   8:	b403      	push	{r0, r1}
+   a:	4909      	ldr	r1, [pc, #36]	; (30 <_main_loop+0x6>)
+   c:	6808      	ldr	r0, [r1, #0]
+   e:	f440 1000 	orr.w	r0, r0, #2097152	; 0x200000
+  12:	6008      	str	r0, [r1, #0]
+  14:	bc03      	pop	{r0, r1}
+  16:	4770      	bx	lr
 
-0000000c <delay>:
-   c:	4770      	bx	lr
+00000018 <led_light_on>:
+  18:	b403      	push	{r0, r1}
+  1a:	4906      	ldr	r1, [pc, #24]	; (34 <_main_loop+0xa>)
+  1c:	f44f 5000 	mov.w	r0, #8192	; 0x2000
+  20:	6008      	str	r0, [r1, #0]
+  22:	bc03      	pop	{r0, r1}
+  24:	4770      	bx	lr
+
+00000026 <main>:
+  26:	f7ff ffef 	bl	8 <led_init>
+
+0000002a <_main_loop>:
+  2a:	e7fe      	b.n	2a <_main_loop>
+  2c:	4770      	bx	lr
+  2e:	10040000 	andne	r0, r4, r0
+  32:	100c4001 	andne	r4, ip, r1
+  36:	Address 0x00000036 is out of bounds.
+
 
 Disassembly of section .debug_aranges:
 
@@ -24,41 +45,46 @@ Disassembly of section .debug_aranges:
    4:	00000002 	andeq	r0, r0, r2
    8:	00040000 	andeq	r0, r4, r0
 	...
-  14:	0000000e 	andeq	r0, r0, lr
+  14:	00000038 	andeq	r0, r0, r8, lsr r0
 	...
 
 Disassembly of section .debug_info:
 
 00000000 <.debug_info>:
-   0:	00000073 	andeq	r0, r0, r3, ror r0
+   0:	00000086 	andeq	r0, r0, r6, lsl #1
    4:	00000002 	andeq	r0, r0, r2
    8:	01040000 	mrseq	r0, (UNDEF: 4)
 	...
-  14:	0000000e 	andeq	r0, r0, lr
-  18:	6f635c2e 	svcvs	0x00635c2e
-  1c:	6d2f6564 	cfstr32vs	mvfx6, [pc, #-400]!	; fffffe94 <_stack+0xfff7fe94>
-  20:	2e6e6961 	vnmulcs.f16	s13, s28, s3	; <UNPREDICTABLE>
-  24:	3a430073 	bcc	10c01f8 <_stack+0x10401f8>
-  28:	6573555c 	ldrbvs	r5, [r3, #-1372]!	; 0xfffffaa4
-  2c:	6a5c7372 	bvs	171cdfc <_stack+0x169cdfc>
-  30:	72445c61 	subvc	r5, r4, #24832	; 0x6100
-  34:	6f62706f 	svcvs	0x0062706f
-  38:	6d495c78 	stclvs	12, cr5, [r9, #-480]	; 0xfffffe20
-  3c:	74726f70 	ldrbtvc	r6, [r2], #-3952	; 0xfffff090
-  40:	20746e61 	rsbscs	r6, r4, r1, ror #28
-  44:	75636f64 	strbvc	r6, [r3, #-3940]!	; 0xfffff09c
-  48:	746e656d 	strbtvc	r6, [lr], #-1389	; 0xfffffa93
-  4c:	54535c73 	ldrbpl	r5, [r3], #-3187	; 0xfffff38d
-  50:	2032334d 	eorscs	r3, r2, sp, asr #6
-  54:	6a6f7270 	bvs	1bdca1c <_stack+0x1b5ca1c>
-  58:	73746365 	cmnvc	r4, #-1811939327	; 0x94000001
-  5c:	64656c5c 	strbtvs	r6, [r5], #-3164	; 0xfffff3a4
-  60:	67696c5f 			; <UNDEFINED> instruction: 0x67696c5f
-  64:	47007468 	strmi	r7, [r0, -r8, ror #8]
-  68:	4120554e 			; <UNDEFINED> instruction: 0x4120554e
-  6c:	2e322053 	mrccs	0, 1, r2, cr2, cr3, {2}
-  70:	302e3832 	eorcc	r3, lr, r2, lsr r8
-  74:	Address 0x00000074 is out of bounds.
+  14:	00000038 	andeq	r0, r0, r8, lsr r0
+  18:	336d7473 	cmncc	sp, #1929379840	; 0x73000000
+  1c:	30316632 	eorscc	r6, r1, r2, lsr r6
+  20:	74386333 	ldrtvc	r6, [r8], #-819	; 0xfffffccd
+  24:	6f635f36 	svcvs	0x00635f36
+  28:	6c2f6572 	cfstr32vs	mvfx6, [pc], #-456	; fffffe68 <GPIOC_LCKR+0xbffeee50>
+  2c:	692e6465 	stmdbvs	lr!, {r0, r2, r5, r6, sl, sp, lr}
+  30:	4300636e 	movwmi	r6, #878	; 0x36e
+  34:	73555c3a 	cmpvc	r5, #14848	; 0x3a00
+  38:	5c737265 	lfmpl	f7, 2, [r3], #-404	; 0xfffffe6c
+  3c:	445c616a 	ldrbmi	r6, [ip], #-362	; 0xfffffe96
+  40:	62706f72 	rsbsvs	r6, r0, #456	; 0x1c8
+  44:	495c786f 	ldmdbmi	ip, {r0, r1, r2, r3, r5, r6, fp, ip, sp, lr}^
+  48:	726f706d 	rsbvc	r7, pc, #109	; 0x6d
+  4c:	746e6174 	strbtvc	r6, [lr], #-372	; 0xfffffe8c
+  50:	636f6420 	cmnvs	pc, #32, 8	; 0x20000000
+  54:	6e656d75 	mcrvs	13, 3, r6, cr5, cr5, {3}
+  58:	535c7374 	cmppl	ip, #116, 6	; 0xd0000001
+  5c:	32334d54 	eorscc	r4, r3, #84, 26	; 0x1500
+  60:	6f727020 	svcvs	0x00727020
+  64:	7463656a 	strbtvc	r6, [r3], #-1386	; 0xfffffa96
+  68:	54535c73 	ldrbpl	r5, [r3], #-3187	; 0xfffff38d
+  6c:	5f32334d 	svcpl	0x0032334d
+  70:	5f64656c 	svcpl	0x0064656c
+  74:	6867696c 	stmdavs	r7!, {r2, r3, r5, r6, r8, fp, sp, lr}^
+  78:	4e470074 	mcrmi	0, 2, r0, cr7, cr4, {3}
+  7c:	53412055 	movtpl	r2, #4181	; 0x1055
+  80:	322e3220 	eorcc	r3, lr, #32, 4
+  84:	00302e38 	eorseq	r2, r0, r8, lsr lr
+  88:	Address 0x00000088 is out of bounds.
 
 
 Disassembly of section .debug_abbrev:
@@ -73,23 +99,35 @@ Disassembly of section .debug_abbrev:
 Disassembly of section .debug_line:
 
 00000000 <.debug_line>:
-   0:	0000003b 	andeq	r0, r0, fp, lsr r0
-   4:	00240002 	eoreq	r0, r4, r2
+   0:	00000070 	andeq	r0, r0, r0, ror r0
+   4:	00420002 	subeq	r0, r2, r2
    8:	01020000 	mrseq	r0, (UNDEF: 2)
    c:	000d0efb 	strdeq	r0, [sp], -fp
   10:	01010101 	tsteq	r1, r1, lsl #2
   14:	01000000 	mrseq	r0, (UNDEF: 0)
-  18:	2e010000 	cdpcs	0, 0, cr0, cr1, cr0, {0}
-  1c:	646f635c 	strbtvs	r6, [pc], #-860	; 24 <delay+0x18>
-  20:	6d000065 	stcvs	0, cr0, [r0, #-404]	; 0xfffffe6c
-  24:	2e6e6961 	vnmulcs.f16	s13, s28, s3	; <UNPREDICTABLE>
-  28:	00010073 	andeq	r0, r1, r3, ror r0
-  2c:	05000000 	streq	r0, [r0, #-0]
-  30:	00000802 	andeq	r0, r0, r2, lsl #16
-  34:	010b0300 	mrseq	r0, (UNDEF: 59)
-  38:	01022422 	tsteq	r2, r2, lsr #8
-  3c:	Address 0x0000003c is out of bounds.
-
+  18:	73010000 	movwvc	r0, #4096	; 0x1000
+  1c:	32336d74 	eorscc	r6, r3, #116, 26	; 0x1d00
+  20:	33303166 	teqcc	r0, #-2147483623	; 0x80000019
+  24:	36743863 	ldrbtcc	r3, [r4], -r3, ror #16
+  28:	726f635f 	rsbvc	r6, pc, #2080374785	; 0x7c000001
+  2c:	5c2e0065 	stcpl	0, cr0, [lr], #-404	; 0xfffffe6c
+  30:	65646f63 	strbvs	r6, [r4, #-3939]!	; 0xfffff09d
+  34:	656c0000 	strbvs	r0, [ip, #-0]!
+  38:	6e692e64 	cdpvs	14, 6, cr2, cr9, cr4, {3}
+  3c:	00010063 	andeq	r0, r1, r3, rrx
+  40:	69616d00 	stmdbvs	r1!, {r8, sl, fp, sp, lr}^
+  44:	00732e6e 	rsbseq	r2, r3, lr, ror #28
+  48:	00000002 	andeq	r0, r0, r2
+  4c:	08020500 	stmdaeq	r2, {r8, sl}
+  50:	03000000 	movweq	r0, #0
+  54:	2123010c 			; <UNDEFINED> instruction: 0x2123010c
+  58:	23223022 			; <UNDEFINED> instruction: 0x23223022
+  5c:	31232325 			; <UNDEFINED> instruction: 0x31232325
+  60:	02042222 	andeq	r2, r4, #536870914	; 0x20000002
+  64:	31206403 			; <UNDEFINED> instruction: 0x31206403
+  68:	29010422 	stmdbcs	r1, {r1, r5, sl}
+  6c:	022e1203 	eoreq	r1, lr, #805306368	; 0x30000000
+  70:	01010002 	tsteq	r1, r2
 
 Disassembly of section .ARM.attributes:
 
