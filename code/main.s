@@ -29,28 +29,36 @@ _main_loop:
 	b _main_loop				@ branch to _main_loop and not load return address to link register (LR)
 	@ return from function
 	bx lr						@ indirect branch to link register address
-	
-@delay:
-	@ return from function
-@	bx lr
 
 nmi_fault:
+	@ breakpoint
+	bkpt
 	bx lr
 	
 hard_fault:
+	@ breakpoint
+	bkpt
 	bx lr
 
 memory_fault:
+	@ breakpoint
+	bkpt
 	bx lr
 
 bus_fault:
+	@ breakpoint
+	bkpt
 	bx lr
 
 usage_fault:
+	@ breakpoint
+	bkpt
 	bx lr	
 
 @ this is dummy function that just return from interrupt
 returtn_form_interrupt:
+	@ breakpoint
+	bkpt
 	bx lr
 	
 .end
